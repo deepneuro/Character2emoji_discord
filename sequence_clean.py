@@ -1,11 +1,15 @@
 import re
 from num2words import num2words
 
+
 def cx(text):
 
     text = re.sub('~-\W+^\s', '', text)
     text = re.sub(':', '', text)
     text = re.sub('~', '', text)
+    text = re.sub("'", '', text)
+    text = re.sub(",", '', text)
+
 
     result = ''
 
@@ -15,8 +19,11 @@ def cx(text):
         elif char == '\n':
             result += '\n'
         else:
-            if char not in ['1','2','3','4','5','6','7','8','9']:
+            if char not in ['1','2','3','4','5','6','7','8','9', 'a', 'b']:
                 regional = ':regional_indicator_' + char + ':' + ' '
+                result += regional
+            elif char == 'a' or 'b':
+                regional = ':' + char + ':' + ' '
                 result += regional
             else:
                 number = ':' + num2words(int(char)) + ':' + ' '
@@ -32,13 +39,18 @@ def multi_cx(txt):
         line = re.sub('~-\W+^\s', '', line)
         line = re.sub(':', '', line)
         line = re.sub('~', '', line)
+        line = re.sub("'", '', line)
+        line = re.sub(",", '', line)
 
         for char in line:
             if char == ' ':
                 result += '     '
             else:
-                if char not in ['1','2','3','4','5','6','7','8','9']:
+                if char not in ['1','2','3','4','5','6','7','8','9', 'a', 'b']:
                     regional = ':regional_indicator_' + char + ':' + ' '
+                    result += regional
+                elif char == 'a' or 'b':
+                    regional = ':' + char + ':' + ' '
                     result += regional
                 else:
                     number = ':' + num2words(int(char)) + ':' + ' '
@@ -54,9 +66,9 @@ def flag(f):
     if flag == 'no' or f == '':
         count = 0
         for elem in txt:
-            count += len(elem) + 3
-        print('Discord limit is 2000.. You submited: ',count*23)
-        if count+len(txt)+12 < int(2000/23):
+            count += len(elem) + 1
+        print('Discord limit is 2000.. You submited: ', count * 23)
+        if count*23 < int(2000):
             multi_cx(txt)
         else:
             print('Sentence too long for discord. Run the Code again...')
@@ -76,7 +88,7 @@ if len(text) + 6 > int(2000/23):
 else:
     f = input("More? Press 'No' to end: ").lower()
 
-    if flag == 'no' or f == '':
+    if f == 'no' or f == '':
         cx(text)
     else:
         txt.append(text)
